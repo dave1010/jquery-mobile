@@ -415,14 +415,12 @@
 
 		// Marks the page for a timed cache expiry
 		function markPageCache( to ) {
-			pageCacheStrategy = to.data('cache');
-			if( pageCacheStrategy != undefined && pageCacheStrategy != 'never' ) {
-				pageCacheExpiry = parseInt(pageCacheStrategy, 10);
-				pageCacheExpiration = parseInt(to.data('cache-expiration'), 10);
-				currentTime = new Date().getTime();
-				if( !isNaN(pageCacheExpiry) && isNaN(pageCacheExpiration) ) {
+			var pageCacheStrategy = to.data('cache');
+			if( pageCacheStrategy && pageCacheStrategy != 'never' ) {
+				var currentTime = +new Date;
+				if( !isNaN(pageCacheStrategy) && !to.data('cache-expiration') ) {
 						// Page cache expiration isn't there. Put it there for future reference.
-						to.data('cache-expiration', ((pageCacheExpiry * 1000) + currentTime));
+						to.data('cache-expiration', ((pageCacheStrategy * 1000) + currentTime));
 				}
 			}
 		}
@@ -434,18 +432,15 @@
 		// - page not being allowed to cache
 		//   <div data-role="page" data-cache="never">
 		function invalidatePageCache( to ) {
-			pageCacheStrategy = to.data('cache');
-			forcePageReload = false;
+			var pageCacheStrategy = to.data('cache'),
+			  forcePageReload = false;
 
-			if( pageCacheStrategy != undefined ) {
+			if( pageCacheStrategy ) {
 				forcePageReload = ( pageCacheStrategy == 'never' );
-
 				if( !forcePageReload ) {
 					// Page is allowed to cache. Check if the expiration time is there.
-					pageCacheExpiry = parseInt(pageCacheStrategy, 10);
-					pageCacheExpiration = parseInt(to.data('cache-expiration'), 10);
-					currentTime = new Date().getTime();
-					if( !isNaN(pageCacheExpiry) && !isNaN(pageCacheExpiration) && pageCacheExpiration < currentTime ) {
+					var currentTime = +new Date;
+					if( !isNaN(pageCacheStrategy) && !isNaN(to.data('cache-expiration')) && to.data('cache-expiration') < currentTime ) {
 						// Page cache expiration is there and page has expired. Mark it for reload.
 						forcePageReload = true;
 					}
