@@ -284,7 +284,7 @@
 
 	//wrap page and transfer data-attrs if it has an ID
 	function wrapNewPage( newPage ){
-		var copyAttrs = ['data-role', 'data-theme', 'data-fullscreen'], //TODO: more page-level attrs?
+		var copyAttrs = ['data-role', 'data-theme', 'data-fullscreen', 'data-cache'], //TODO: more page-level attrs?
 			wrapper = newPage.wrap( "<div>" ).parent();
 			
 		$.each(copyAttrs,function(i){
@@ -403,6 +403,7 @@
 		
 		//shared page enhancements
 		function enhancePage(){
+			markPageCache( to );
 			setPageRole( to );
 			to.page();
 		}
@@ -410,6 +411,48 @@
 		//get the actual file in a jq-mobile nested url
 		function getFileURL( url ){
 			return url.match( '&' + $.mobile.subPageUrlKey ) ? url.split( '&' + $.mobile.subPageUrlKey )[0] : url;
+		}
+
+		// Marks the page for a timed cache expiry
+		function markPageCache( to ) {
+			pageCacheStrategy = to.data('cache');
+			if( pageCacheStrategy != undefined && pageCacheStrategy != 'never' ) {
+				pageCacheExpiry = parseInt(pageCacheStrategy, 10);
+				pageCacheExpiration = parseInt(to.data('cache-expiration'), 10);
+				currentTime = new Date().getTime();
+				if( !isNaN(pageCacheExpiry) && isNaN(pageCacheExpiration) ) {
+						// Page cache expiration isn't there. Put it there for future reference.
+						to.data('cache-expiration', ((pageCacheExpiry * 1000) + currentTime));
+				}
+			}
+		}
+
+		// Checks if the page should be removed due to:
+		// - cache expiry (data-cache holds number of seconds)
+		//	 <div data-role="page" data-cache="30">
+		//
+		// - page not being allowed to cache
+		//   <div data-role="page" data-cache="never">
+		function invalidatePageCache( to ) {
+			pageCacheStrategy = to.data('cache');
+			forcePageReload = false;
+
+			if( pageCacheStrategy != undefined ) {
+				forcePageReload = ( pageCacheStrategy == 'never' );
+
+				if( !forcePageReload ) {
+					// Page is allowed to cache. Check if the expiration time is there.
+					pageCacheExpiry = parseInt(pageCacheStrategy, 10);
+					pageCacheExpiration = parseInt(to.data('cache-expiration'), 10);
+					currentTime = new Date().getTime();
+					if( !isNaN(pageCacheExpiry) && !isNaN(pageCacheExpiration) && pageCacheExpiration < currentTime ) {
+						// Page cache expiration is there and page has expired. Mark it for reload.
+						forcePageReload = true;
+					}
+				}
+			}
+
+			return forcePageReload;
 		}
 
 		//if url is a string
@@ -426,8 +469,10 @@
 			}	
 		}
 		
+		forcePageReload = invalidatePageCache(to);
+
 		// find the "to" page, either locally existing in the dom or by creating it through ajax
-		if ( to.length && !isFormRequest ) {
+		if ( !forcePageReload && to.length && !isFormRequest ) {
 			if( fileUrl ){
 				setBaseURL(fileUrl);
 			}	
