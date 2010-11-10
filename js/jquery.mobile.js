@@ -17,9 +17,9 @@
 		//hash segment before &ui-page= is used to make Ajax request
 		subPageUrlKey: 'ui-page',
 		
-		//anchor links that match these selectors will be untrackable in history 
+		//anchor links with a data-rel, or pages with a data-role, that match these selectors will be untrackable in history 
 		//(no change in URL, not bookmarkable)
-		nonHistorySelectors: '[data-rel=dialog]',
+		nonHistorySelectors: 'dialog',
 		
 		//class assigned to page currently in view, and during transitions
 		activePageClass: 'ui-page-active',
@@ -36,7 +36,7 @@
 		//available CSS transitions
 		transitions: ['slide', 'slideup', 'slidedown', 'pop', 'flip', 'fade'],
 		
-		//set default transition
+		//set default transition - 'none' for no transitions
 		defaultTransition: 'slide',
 		
 		//show loading message during Ajax requests
@@ -226,7 +226,7 @@
 			//use ajax
 			var transition = $this.data( "transition" ),
 				back = $this.data( "back" ),
-				changeHashOnSuccess = !$this.is( $.mobile.nonHistorySelectors );
+				changeHashOnSuccess = !$this.is( "[data-rel="+ $.mobile.nonHistorySelectors +"]" );
 				
 			nextPageRole = $this.attr( "data-rel" );	
 	
@@ -274,6 +274,12 @@
 		}
 	}
 	
+	//update hash, with or without triggering hashchange event
+	$.mobile.updateHash = function(url, disableListening){
+		if(disableListening) { hashListener = false; }
+		location.hash = url;
+	}
+
 	//wrap page and transfer data-attrs if it has an ID
 	function wrapNewPage( newPage ){
 		var copyAttrs = ['data-role', 'data-theme', 'data-fullscreen'], //TODO: more page-level attrs?
@@ -352,8 +358,7 @@
 				}
 				reFocus( to );
 				if( changeHash && url ){
-					hashListener = false;
-					location.hash = url;
+					$.mobile.updateHash(url, true);
 				}
 				removeActiveLinkClass();
 				
@@ -363,7 +368,7 @@
 				}
 			}
 			
-			if(transition){		
+			if(transition && (transition !== 'none')){		
 				$pageContainer.addClass('ui-mobile-viewport-transitioning');
 				// animate in / out
 				from.addClass( transition + " out " + ( back ? "reverse" : "" ) );
@@ -494,6 +499,11 @@
 				hashListener = true;
 				return; 
 			} 
+			
+			if( $(".ui-page-active").is("[data-role=" + $.mobile.nonHistorySelectors + "]") ){
+				return;
+			}
+			
 			var to = location.hash,
 				transition = triggered ? false : undefined;
 				
