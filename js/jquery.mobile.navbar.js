@@ -4,7 +4,7 @@
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 * Note: Code is in draft form and is subject to change 
 */
-(function ( $ ) {
+(function($, undefined ) {
 $.widget( "mobile.navbar", $.mobile.widget, {
 	options: {
 		iconpos: 'top'
@@ -12,7 +12,7 @@ $.widget( "mobile.navbar", $.mobile.widget, {
 	_create: function(){
 		var $navbar = this.element,
 			$navbtns = $navbar.find("a"),
-			iconpos = $navbtns.filter('icon').length ? this.options.iconpos : undefined;
+			iconpos = $navbtns.filter('data-icon').length ? this.options.iconpos : undefined;
 		
 		$navbar
 			.addClass('ui-navbar')

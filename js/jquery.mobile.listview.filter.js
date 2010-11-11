@@ -1,4 +1,10 @@
-(function( $ ) {
+/*
+* jQuery Mobile Framework : "listview" filter extension
+* Copyright (c) jQuery Project
+* Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
+* Note: Code is in draft form and is subject to change 
+*/
+(function($, undefined ) {
 
 $.mobile.listview.prototype.options.filter = false;
 

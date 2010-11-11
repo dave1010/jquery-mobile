@@ -4,9 +4,9 @@
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 * Note: Code is in draft form and is subject to change 
 */
-(function ( jQuery ) {
+(function($, undefined ) {
 
-jQuery.widget( "mobile.page", jQuery.mobile.widget, {
+$.widget( "mobile.page", $.mobile.widget, {
 	options: {
 		addBackBtn: true,
 		degradeInputs: {
@@ -38,7 +38,7 @@ jQuery.widget( "mobile.page", jQuery.mobile.widget, {
 		// classes so we'll handle page and content roles outside of the main role processing
 		// loop below.
 		$elem.find( "[data-role='page'], [data-role='content']" ).andSelf().each(function() {
-			jQuery(this).addClass( "ui-" + jQuery(this).data( "role" ) );
+			$(this).addClass( "ui-" + $(this).data( "role" ) );
 		});
 		
 		$elem.find( "[data-role='nojs']" ).addClass( "ui-nojs" );
@@ -47,7 +47,7 @@ jQuery.widget( "mobile.page", jQuery.mobile.widget, {
 		
 		// pre-find data els
 		var $dataEls = $elem.find( "[data-role]" ).andSelf().each(function() {
-			var $this = jQuery( this ),
+			var $this = $( this ),
 				role = $this.data( "role" ),
 				theme = $this.data( "theme" );
 			
@@ -73,10 +73,10 @@ jQuery.widget( "mobile.page", jQuery.mobile.widget, {
 				
 				// auto-add back btn on pages beyond first view
 				if ( o.addBackBtn && role === "header" &&
-						(jQuery.mobile.urlStack.length > 1 || jQuery(".ui-page").length > 1) &&
+						($.mobile.urlStack.length > 1 || $(".ui-page").length > 1) &&
 						!leftbtn && !$this.data( "noBackBtn" ) ) {
 
-					jQuery( "<a href='#' class='ui-btn-left' data-icon='arrow-l'>"+ jQuery.mobile.backBtnText +"</a>" )
+					$( "<a href='#' class='ui-btn-left' data-icon='arrow-l'>"+ $.mobile.backBtnText +"</a>" )
 						.click(function() {
 							history.back();
 							return false;
@@ -142,8 +142,8 @@ jQuery.widget( "mobile.page", jQuery.mobile.widget, {
 		this.element.find( "input" ).each(function() {
 			var type = this.getAttribute( "type" );
 			if ( o.degradeInputs[ type ] ) {
-				jQuery( this ).replaceWith(
-					jQuery( "<div>" ).html( jQuery(this).clone() ).html()
+				$( this ).replaceWith(
+					$( "<div>" ).html( $(this).clone() ).html()
 						.replace( /type="([a-zA-Z]+)"/, "data-type='$1'" ) );
 			}
 		});

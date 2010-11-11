@@ -4,7 +4,7 @@
 * Dual licensed under the MIT (MIT-LICENSE.txt) and GPL (GPL-LICENSE.txt) licenses.
 * Note: Code is in draft form and is subject to change 
 */  
-(function ( $ ) {
+(function($, undefined ) {
 $.widget( "mobile.selectmenu", $.mobile.widget, {
 	options: {
 		theme: null,
@@ -217,7 +217,7 @@ $.widget( "mobile.selectmenu", $.mobile.widget, {
 		
 			self.menuType = "page";		
 			self.menuPageContent.append( self.list );
-			$.changePage(self.menuPage, 'pop', false, false);
+			$.mobile.changePage(self.menuPage, 'pop', false, false);
 		}
 		else {
 			self.menuType = "overlay";
@@ -251,7 +251,7 @@ $.widget( "mobile.selectmenu", $.mobile.widget, {
 		}
 		
 		if(self.menuType == "page"){			
-			$.changePage([self.menuPage,self.thisPage], 'pop', true, false);
+			$.mobile.changePage([self.menuPage,self.thisPage], 'pop', true, false);
 			self.menuPage.one("pagehide",function(){
 				focusButton();
 				//return false;
