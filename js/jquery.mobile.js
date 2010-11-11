@@ -141,12 +141,12 @@
 	$.mobile.idStringEscape = idStringEscape;
 	
 	// hide address bar
-	function hideBrowserChrome() {
+	function silentScroll( ypos ) {
 		// prevent scrollstart and scrollstop events
 		jQuery.event.special.scrollstart.enabled = false;
 		setTimeout(function() {
-			window.scrollTo( 0, 0 );
-		},0);	
+			window.scrollTo( 0, ypos || 0 );
+		},20);	
 		setTimeout(function() {
 			jQuery.event.special.scrollstart.enabled = true;
 		}, 150 );
@@ -208,8 +208,11 @@
 		var $this = $(this),
 			//get href, remove same-domain protocol and host
 			href = $this.attr( "href" ).replace( location.protocol + "//" + location.host, ""),
+			//if target attr is specified, it's external, and we mimic _blank... for now
+			target = $this.is( "[target]" ),
 			//if it still starts with a protocol, it's external, or could be :mailto, etc
-			external = /^(:?\w+:)/.test( href ) || $this.is( "[target],[rel=external]" );
+			external = target || /^(:?\w+:)/.test( href ) || $this.is( "[rel=external]" ),
+			target = $this.is( "[target]" );
 
 		if( href === '#' ){
 			//for links created purely for interaction - ignore
@@ -219,8 +222,16 @@
 		$activeClickedLink = $this.closest( ".ui-btn" ).addClass( $.mobile.activeBtnClass );
 		
 		if( external || !$.mobile.ajaxLinksEnabled ){
+			//remove active link class if external
+			removeActiveLinkClass(true);
+			
 			//deliberately redirect, in case click was triggered
-			location.href = href;
+			if( target ){
+				window.open(href);
+			}
+			else{
+				location.href = href;
+			}
 		}
 		else {	
 			//use ajax
@@ -346,6 +357,12 @@
 			//kill the keyboard
 			jQuery( window.document.activeElement ).blur();
 			
+			//get current scroll distance
+			var currScroll = $window.scrollTop();
+			
+			//set as data for returning to that spot
+			from.data('lastScroll', currScroll);
+			
 			//trigger before show/hide events
 			from.data("page")._trigger("beforehide", {nextPage: to});
 			to.data("page")._trigger("beforeshow", {prevPage: from});
@@ -366,9 +383,12 @@
 				if( duplicateCachedPage != null ){
 					duplicateCachedPage.remove();
 				}
+				
+				//jump to top or prev scroll, if set
+				silentScroll( to.data( 'lastScroll' ) );
 			}
 			
-			if(transition && (transition !== 'none')){		
+			if(transition && (transition !== 'none')){	
 				$pageContainer.addClass('ui-mobile-viewport-transitioning');
 				// animate in / out
 				from.addClass( transition + " out " + ( back ? "reverse" : "" ) );
@@ -596,7 +616,7 @@
 	jQuery.extend({
 		pageLoading: pageLoading,
 		changePage: changePage,
-		hideBrowserChrome: hideBrowserChrome
+		silentScroll: silentScroll
 	});
 
 	//dom-ready
@@ -625,8 +645,6 @@
 		$html.removeClass('ui-mobile-rendering');
 	});
 	
-	$window
-		.load(hideBrowserChrome)
-		.unload(removeActiveLinkClass);
+	$window.load(silentScroll);	
 	
 })( jQuery, this );
