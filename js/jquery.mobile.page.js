@@ -8,6 +8,7 @@
 
 $.widget( "mobile.page", $.mobile.widget, {
 	options: {
+		backBtnText: "Back"
 		addBackBtn: true,
 		degradeInputs: {
 			color: false,
@@ -76,7 +77,7 @@ $.widget( "mobile.page", $.mobile.widget, {
 						($.mobile.urlStack.length > 1 || $(".ui-page").length > 1) &&
 						!leftbtn && !$this.data( "noBackBtn" ) ) {
 
-					$( "<a href='#' class='ui-btn-left' data-icon='arrow-l'>"+ $.mobile.backBtnText +"</a>" )
+					$( "<a href='#' class='ui-btn-left' data-icon='arrow-l'>"+ o.backBtnText +"</a>" )
 						.click(function() {
 							history.back();
 							return false;
