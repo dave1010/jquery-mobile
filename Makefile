@@ -29,6 +29,7 @@ FILES = js/jquery.ui.widget.js \
   js/jquery.mobile.dialog.js \
   js/jquery.mobile.navbar.js \
   js/jquery.mobile.grid.js \
+  js/jquery.mobile.flashMessage.js \
   js/jquery.mobile.js
 
 CSSFILES =  themes/default/jquery.mobile.theme.css \
@@ -46,7 +47,8 @@ CSSFILES =  themes/default/jquery.mobile.theme.css \
   themes/default/jquery.mobile.forms.select.css \
   themes/default/jquery.mobile.forms.textinput.css \
   themes/default/jquery.mobile.listview.css \
-  themes/default/jquery.mobile.forms.slider.css
+  themes/default/jquery.mobile.forms.slider.css \
+  themes/default/jquery.mobile.flashMessage.css
 
 all: mobile min css cssmin
 
