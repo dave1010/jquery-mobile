@@ -83,23 +83,6 @@
 			ok($(".ui-loader").length);
 		});
 
-				var metaViewportSelector = "head meta[name=viewport]",
-		setViewPortContent = function(value){
-			$(metaViewportSelector).remove();
-			$.testHelper.alterExtend({metaViewportContent: value});
-			$.testHelper.reloadLib(libName);
-		};
-
-		test( "meta view port element is added to head when defined on mobile", function(){
-			setViewPortContent("width=device-width");
-			same($(metaViewportSelector).length, 1);
-		});
-
-		test( "meta view port element not added to head when not defined on mobile", function(){
-			setViewPortContent(false);
-			same($(metaViewportSelector).length, 0);
-		});
-
 		var findFirstPage = function() {
 			return $("[data-role='page']").first();
 		};

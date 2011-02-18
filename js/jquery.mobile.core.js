@@ -48,9 +48,6 @@
 		//if false, message will not appear, but loading classes will still be toggled on html el
 		loadingMessage: "loading",
 
-		//configure meta viewport tag's content attr:
-		metaViewportContent: "width=device-width, minimum-scale=1, maximum-scale=1",
-
 		//support conditions that must be met in order to proceed
 		gradeA: function(){
 			
@@ -129,14 +126,8 @@
 					"</div>" )
 			: undefined;
 
-
 	//add mobile, initial load "rendering" classes to docEl
 	$html.addClass( "ui-mobile ui-mobile-rendering" );
-
-
-	//define & prepend meta viewport tag, if content is defined
-	$.mobile.metaViewportContent ? $( "<meta>", { name: "viewport", content: $.mobile.metaViewportContent}).prependTo( $head ) : undefined;
-
 
 	//expose some core utilities
 	$.extend($.mobile, {
