@@ -11,6 +11,9 @@
 
 	//jQuery.mobile configurable options
 	$.extend( $.mobile, {
+		
+		//namespace used framework-wide for data-attrs, widget naming, and CSS classes
+		ns: "jq-",
 
 		//define the url parameter used for referencing widget-generated sub-pages.
 		//Translates to to example.html&ui-page=subpageIdentifier
@@ -104,7 +107,16 @@
 	if ( !$.mobile.gradeA() ) {
 		return;
 	}
-
+	
+	//extend data() to treat namespaced data-attrs the same as non-namespaced ones
+	var jqd = $.fn.data;
+ 
+    $.fn.data = function( prop, value ){
+ 		if( !value && !this.attr( "[data-" + prop + "]" ) && this.attr( "[data-" $.mobile.ns + prop + "]" ) ){
+ 			prop = $.mobile.ns + prop;
+ 			return jqd.call( this, prop );	
+ 		}
+    };
 
 	//define vars for interal use
 	var $window = $(window),
@@ -172,11 +184,11 @@
 		// find and enhance the pages in the dom and transition to the first page.
 		initializePage: function(){
 			//find present pages
-			var $pages = $( "[data-role='page']" );
+			var $pages = $( "[data-" + $.mobile.ns + "role='page']" );
 
 			//add dialogs, set data-url attrs
-			$pages.add( "[data-role='dialog']" ).each(function(){
-				$(this).attr( "data-url", $(this).attr( "id" ));
+			$pages.add( "[data-" + $.mobile.ns + "role='dialog']" ).each(function(){
+				$(this).attr( "data-" + $.mobile.ns + "url", $(this).attr( "id" ));
 			});
 
 			//define first page in dom case one backs out to the directory root (not always the first page visited, but defined as fallback)
