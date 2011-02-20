@@ -482,7 +482,7 @@
 			fileUrl = path.getFilePath(url);
 		}
 		else{ //find base url of element, if avail
-			var toID = to.attr('data-" + $.mobile.ns + "url'),
+			var toID = to.attr( "data-" + $.mobile.ns + "url" ),
 				toIDfileurl = path.getFilePath(toID);
 
 			if(toID !== toIDfileurl){
@@ -519,7 +519,7 @@
 					var all = $("<div></div>"),
 							redirectLoc,
 							// TODO handle dialogs again
-							pageElemRegex = /.*(<[^>]*\bdata-role=["']?page["']?[^>]*>).*/,
+							pageElemRegex = new RegExp(".*(<[^>]*\bdata-" + $.mobile.ns + "role=[\"']?page[\"']?[^>]*>).*"),
 							dataUrlRegex = new RegExp("\bdata-" + $.mobile.ns + "url=[\"']?([^\"'>]*)[\"']?");
 
 					// data-url must be provided for the base tag so resource requests can be directed to the
@@ -542,7 +542,7 @@
 
 					//workaround to allow scripts to execute when included in page divs
 					all.get(0).innerHTML = html;
-					to = all.find('[data-role="page"], [data-role="dialog"]').first();
+					to = all.find( "[data-" + $.mobile.ns + "role='page'], [data-" + $.mobile.ns + "role='dialog']" ).first();
 
 					//rewrite src and href attrs to use a base url
 					if( !$.support.dynamicBaseTag ){
@@ -562,7 +562,7 @@
 
 					//append to page and enhance
 					to
-						.attr( "data-url", fileUrl )
+						.attr( "data-" + $.mobile.ns + "url", fileUrl )
 						.appendTo( $.mobile.pageContainer );
 
 					enhancePage();
@@ -649,10 +649,10 @@
 			hasTarget = $this.is( "[target]" ),
 
 			//if data-ajax attr is set to false, use the default behavior of a link
-			hasAjaxDisabled = $this.is( "[data-ajax='false']" );
+			hasAjaxDisabled = $this.is( "[data-" + $.mobile.ns + "ajax='false']" );
 
 		//if there's a data-rel=back attr, go back in history
-		if( $this.is( "[data-rel='back']" ) ){
+		if( $this.is( "[data-" + $.mobile.ns + "rel='back']" ) ){
 			window.history.back();
 			return false;
 		}
@@ -691,7 +691,7 @@
 				$this.data( "back" );
 
 			//this may need to be more specific as we use data-rel more
-			nextPageRole = $this.attr( "data-rel" );
+			nextPageRole = $this.attr( "data-" + $.mobile.ns + "rel" );
 
 			//if it's a relative href, prefix href with base url
 			if( path.isRelative( url ) ){
